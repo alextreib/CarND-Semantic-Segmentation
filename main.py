@@ -41,11 +41,12 @@ def load_vgg(sess, vgg_path):
     # Getting the graph for the layers
     graph = tf.get_default_graph()
     inputLayer = graph.get_tensor_by_name(vgg_input_tensor_name)
+    keepProb = graph.get_tensor_by_name(vgg_keep_prob_tensor_name)
     layer3 = graph.get_tensor_by_name(vgg_layer3_out_tensor_name)
     layer4 = graph.get_tensor_by_name(vgg_layer4_out_tensor_name)
     layer7 = graph.get_tensor_by_name(vgg_layer7_out_tensor_name)
 
-    return w1, keepProp, layer3, layer4, layer7
+    return inputLayer, keepProb, layer3, layer4, layer7
 
 
 tests.test_load_vgg(load_vgg, tf)
@@ -182,6 +183,9 @@ def run():
     # Parameters
     epochs=48
     batch_size=5
+    correct_label = tf.placeholder(
+            tf.int32, [None, None, None, num_classes], name='correct_label')
+    learning_rate = tf.placeholder(tf.float32, name='learning_rate')
 
     # Download pretrained vgg model
     helper.maybe_download_pretrained_vgg(data_dir)
