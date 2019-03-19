@@ -62,12 +62,52 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     """
     # Architecture taken from paper Fully Convolutional Networks for Semantic Segmentation
     # https://arxiv.org/pdf/1605.06211.pdf
-    conv_1x1 = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, padding='same',
-                                kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    weights_initializer_stddev = 0.01
+    weights_regularized_l2 = 1e-3
 
-    # Deconvolution - kernel_size=4, strides=2 -> upsampling
-    output = tf.layers.conv2d_transpose(
-        conv_1x1, num_classes, 4, 2, padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    layer7 = tf.layers.conv2d(vgg_layer7_out, num_classes, 1,
+                            padding='same',
+                            kernel_initializer=tf.random_normal_initializer(
+                                stddev=weights_initializer_stddev),
+                            kernel_regularizer=tf.contrib.layers.l2_regularizer(weights_regularized_l2))
+    # Upsampling
+    layer4_1 = tf.layers.conv2d_transpose(layer7, num_classes, 4,
+                                             strides=(2, 2),
+                                             padding='same',
+                                             kernel_initializer=tf.random_normal_initializer(
+                                                 stddev=weights_initializer_stddev),
+                                             kernel_regularizer=tf.contrib.layers.l2_regularizer(weights_regularized_l2))
+    # Convolution Layer 4
+    layer4_2 = tf.layers.conv2d(vgg_layer4_out, num_classes, 1,
+                                   padding='same',
+                                   kernel_initializer=tf.random_normal_initializer(
+                                       stddev=weights_initializer_stddev),
+                                   kernel_regularizer=tf.contrib.layers.l2_regularizer(weights_regularized_l2))
+    # Skip Connection part
+    layer4a_out = tf.add(layer4_1, layer4_2)
+    # Upsampling
+    layer3_1 = tf.layers.conv2d_transpose(layer4a_out, num_classes, 4,
+                                             strides=(2, 2),
+                                             padding='same',
+                                             kernel_initializer=tf.random_normal_initializer(
+                                                 stddev=weights_initializer_stddev),
+                                             kernel_regularizer=tf.contrib.layers.l2_regularizer(weights_regularized_l2))
+    # Convolution Layer 3
+    layer3_2 = tf.layers.conv2d(vgg_layer3_out, num_classes, 1,
+                                   padding='same',
+                                   kernel_initializer=tf.random_normal_initializer(
+                                       stddev=weights_initializer_stddev),
+                                   kernel_regularizer=tf.contrib.layers.l2_regularizer(weights_regularized_l2))
+    # Skip Connection part
+    layer3a_out = tf.add(layer3_1, layer3_2)
+    # Upsampling
+    output = tf.layers.conv2d_transpose(layer3a_out, num_classes, 16,
+                                               strides=(8, 8),
+                                               padding='same',
+                                               kernel_initializer=tf.random_normal_initializer(
+                                                   stddev=weights_initializer_stddev),
+                                               kernel_regularizer=tf.contrib.layers.l2_regularizer(weights_regularized_l2))
+    return output
 
 
 return None
