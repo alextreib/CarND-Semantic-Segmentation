@@ -184,7 +184,7 @@ def run():
     tests.test_for_kitti_dataset(data_dir)
 
     # Parameters
-    epochs = 50
+    epochs = 40
     batch_size = 5
 
     # Download pretrained vgg model
