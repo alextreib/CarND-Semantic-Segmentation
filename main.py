@@ -155,7 +155,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     :param learning_rate: TF Placeholder for learning rate
     """
     # TODO: Modify the prints and loss_log
-	sess.run(tf.global_variables_initializer())
+    sess.run(tf.global_variables_initializer())
     for epoch in range(epochs):
         print('Epoch : {}'.format(epoch + 1))
         loss_log = []
