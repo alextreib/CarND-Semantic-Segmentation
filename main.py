@@ -181,11 +181,9 @@ def run():
     tests.test_for_kitti_dataset(data_dir)
     
     # Parameters
-    epochs=48
+    epochs=50
     batch_size=5
-    correct_label = tf.placeholder(
-            tf.int32, [None, None, None, num_classes], name='correct_label')
-    learning_rate = tf.placeholder(tf.float32, name='learning_rate')
+    
 
     # Download pretrained vgg model
     helper.maybe_download_pretrained_vgg(data_dir)
@@ -205,7 +203,11 @@ def run():
         # # #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
 
         # Load the vgg model
-        input_image, keep_prob, layer3_out, layer4_out, layer7_out = load_vgg(
+        correct_label = tf.placeholder(
+            tf.int32, [None, None, None, num_classes], name='correct_label')
+    	learning_rate = tf.placeholder(tf.float32, name='learning_rate')
+	
+		input_image, keep_prob, layer3_out, layer4_out, layer7_out = load_vgg(
             sess, vgg_path)
         
         # Get layers (architecture for tf)
