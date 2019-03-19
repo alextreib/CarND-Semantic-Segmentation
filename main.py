@@ -109,8 +109,6 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
                                                kernel_regularizer=tf.contrib.layers.l2_regularizer(weights_regularized_l2))
     return output
 
-
-return None
 tests.test_layers(layers)
 
 
