@@ -68,3 +68,48 @@ If you are unfamiliar with GitHub , Udacity has a brief [GitHub tutorial](http:/
 To learn about REAMDE files and Markdown, Udacity provides a free [course on READMEs](https://www.udacity.com/courses/ud777), as well. 
 
 GitHub also provides a [tutorial](https://guides.github.com/features/mastering-markdown/) about creating Markdown files.
+
+---
+
+Writeup
+
+---
+
+**Semantic Segmentation**
+
+---
+
+### Build the Neural Network
+
+#### Architecture
+
+Based on a pre-trained VGG-16 dataset that is converted to a convolutional network, layers according to this approach are implemented: https://arxiv.org/pdf/1605.06211.pdf.
+For details see the function "layers" in the main.py.
+
+Here, two classes are given (road and non-road).
+Moreover, some techniques from class are used (like skip connections and upsampling).
+For each layer, different kernel initializer and kernel regularizer are used.
+
+#### Optimizer
+
+For the optimization a cross-entropy as loss function as well as an Adam optimizer are used.
+
+#### Training
+
+The hyperparameters used for training are:
+
+* keep_prob: 0.5
+* learning_rate: 0.00001
+* epochs: 40
+* batch_size: 5
+
+#### Results
+
+Here you can find some results from the fully convolutional network. 
+
+![sample1](./examples/sample1.png)
+![sample2](./examples/sample2.png)
+![sample3](./examples/sample3.png)
+![sample4](./examples/sample4.png)
+
+The performance could possibly increased with a higher number of epochs.
