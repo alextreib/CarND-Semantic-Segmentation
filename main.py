@@ -154,11 +154,13 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     :param keep_prob: TF Placeholder for dropout keep probability
     :param learning_rate: TF Placeholder for learning rate
     """
-    # TODO: Modify the prints and loss_log
+
     sess.run(tf.global_variables_initializer())
+    
+    # Iterate over Nr. of epochs
     for epoch in range(epochs):
-        print('Epoch : {}'.format(epoch + 1))
-        loss_log = []
+        print('Epoch Nr. : {}'.format(epoch))
+        loss_list = []
         for image, label in get_batches_fn(batch_size):
             _, loss = sess.run([train_op, cross_entropy_loss],
                                feed_dict={
@@ -167,14 +169,11 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
                 keep_prob: 0.5,
                 learning_rate: 0.00001
             })
-            loss_log.append('{:3f}'.format(loss))
-        print(loss_log)
-        print()
+            loss_list.append('{:3f}'.format(loss))
+        print(loss_list)
     print('Training finished')
 
-
 tests.test_train_nn(train_nn)
-
 
 def run():
     num_classes = 2
@@ -190,19 +189,12 @@ def run():
     # Download pretrained vgg model
     helper.maybe_download_pretrained_vgg(data_dir)
 
-    # OPTIONAL: Train and Inference on the cityscapes dataset instead of the Kitti dataset.
-    # You'll need a GPU with at least 10 teraFLOPS to train on.
-    #  https://www.cityscapes-dataset.com/
-
     with tf.Session() as sess:
         # Path to vgg model
         vgg_path = os.path.join(data_dir, 'vgg')
         # Create function to get batches
         get_batches_fn = helper.gen_batch_function(
             os.path.join(data_dir, 'data_road/training'), image_shape)
-
-        # # # OPTIONAL: Augment Images for better results
-        # # #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
 
         # Load the vgg model
         correct_label = tf.placeholder(
@@ -219,17 +211,12 @@ def run():
         logits, train_op, cross_entropy_loss = optimize(
             layer_output, correct_label, learning_rate, num_classes)
 
-        # TODO: Train NN using the train_nn function
-
-        saver = tf.train.Saver()
-
+        # Train NN
         train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_loss, input_image,
                  correct_label, keep_prob, learning_rate)
 
         helper.save_inference_samples(
             runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
-        # # # OPTIONAL: Apply the trained model to a video
-
 
 if __name__ == '__main__':
     run()
